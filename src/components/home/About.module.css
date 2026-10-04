@@ -1,0 +1,133 @@
+.aboutGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 3rem;
+}
+
+@media (min-width: 1000px) {
+  .aboutGrid {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    gap: clamp(3rem, 6vw, 7rem);
+    align-items: start;
+  }
+
+  .aboutMedia {
+    position: sticky;
+    top: calc(var(--header-h) + 2rem);
+  }
+}
+
+.aboutMedia {
+  margin: 0;
+}
+
+.aboutFrame {
+  overflow: hidden;
+  border-radius: var(--radius);
+  aspect-ratio: 4 / 5;
+  background: var(--paper-3);
+}
+
+@media (max-width: 999px) {
+  .aboutFrame {
+    aspect-ratio: 4 / 3;
+  }
+}
+
+.aboutImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 60% 50%;
+}
+
+.aboutMedia figcaption {
+  margin-top: 0.75rem;
+  font-size: 0.8rem;
+  color: var(--ink-3);
+}
+
+.aboutCopy h2 {
+  margin-top: 1.25rem;
+  font-size: var(--step-4);
+}
+
+.aboutIntro {
+  margin-top: 2rem;
+  font-size: var(--step-2);
+  font-weight: 500;
+  line-height: 1.35;
+  letter-spacing: -0.015em;
+  max-width: 30em;
+}
+
+.aboutBody {
+  display: grid;
+  gap: 1.25rem;
+  margin-top: 2rem;
+  max-width: 38em;
+  color: var(--ink-2);
+  font-size: 1.06rem;
+  line-height: 1.7;
+}
+
+.aboutQuote {
+  position: relative;
+  margin: 1.25rem 0;
+  padding: 1.75rem 0 1.75rem 1.75rem;
+  border-left: 3px solid var(--accent);
+}
+
+.aboutQuote p {
+  font-size: var(--step-3);
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -0.03em;
+  color: var(--ink);
+}
+
+.aboutSignature {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  margin-top: 0.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.88rem;
+  color: var(--ink);
+}
+
+.aboutSigLine {
+  width: 2.5rem;
+  height: 1px;
+  background: var(--ink);
+}
+
+.timeline {
+  list-style: none;
+  margin-top: 3rem;
+  border-top: 1px solid var(--line-strong);
+}
+
+.timeline li {
+  display: grid;
+  grid-template-columns: 7.5rem minmax(0, 1fr);
+  gap: 1rem;
+  padding: 1.1rem 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.timelineYear {
+  font-weight: 500;
+  color: var(--accent-text);
+}
+
+.timelineText {
+  color: var(--ink-2);
+}
+
+@media (max-width: 479px) {
+  .timeline li {
+    grid-template-columns: 1fr;
+    gap: 0.25rem;
+  }
+}

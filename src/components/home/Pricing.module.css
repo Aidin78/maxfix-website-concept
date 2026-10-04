@@ -1,0 +1,248 @@
+.pricingTop {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 2.5rem;
+  align-items: end;
+}
+
+@media (min-width: 1000px) {
+  .pricingTop {
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+    gap: clamp(3rem, 6vw, 7rem);
+  }
+}
+
+.pricingHead h2 {
+  margin-top: 1.25rem;
+  font-size: var(--step-4);
+}
+
+.pricingHead :global(.lead) {
+  margin-top: 1.25rem;
+}
+
+.pricingBoard {
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--line-on-night);
+}
+
+.pricingFrom {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0.4rem 0.8rem;
+}
+
+.pricingFrom :global(.mono) {
+  font-size: 0.9rem;
+  color: var(--ink-on-night-2);
+}
+
+.pricingFrom strong {
+  font-size: clamp(4.5rem, 3rem + 7vw, 8.5rem);
+  font-weight: 800;
+  line-height: 0.85;
+  letter-spacing: -0.06em;
+  color: var(--ink-on-night);
+}
+
+.pricingUnit {
+  font-size: var(--step-2);
+  font-weight: 600;
+}
+
+.pricingFromNote {
+  margin-top: 0.75rem;
+  font-weight: 600;
+  color: var(--accent-on-night);
+}
+
+.pricingDeductions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr));
+  gap: 1px;
+  margin-top: 1.75rem;
+  background: var(--line-on-night);
+  border: 1px solid var(--line-on-night);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.pricingDeductions div {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  padding: 1rem 1.1rem;
+  background: var(--night);
+}
+
+.pricingDeductions strong {
+  font-size: var(--step-3);
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  white-space: nowrap;
+}
+
+.pricingDeductions span {
+  font-size: 0.85rem;
+  line-height: 1.35;
+  color: var(--ink-on-night-2);
+}
+
+.pricingFootnote {
+  margin-top: 1rem;
+  font-size: 0.85rem;
+  color: var(--ink-on-night-2);
+}
+
+/* ---------- Lists + estimator ---------- */
+.pricingBody {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 3rem;
+  margin-top: clamp(3.5rem, 2.5rem + 4vw, 6rem);
+}
+
+@media (min-width: 1000px) {
+  .pricingBody {
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+    gap: clamp(3rem, 6vw, 7rem);
+    align-items: start;
+  }
+
+  .pricingEstimator {
+    position: sticky;
+    top: calc(var(--header-h) + 2rem);
+  }
+}
+
+.pricingLists {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 3rem;
+}
+
+.priceListTitle {
+  padding-bottom: 0.85rem;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-on-night-2);
+  border-bottom: 1px solid var(--line-on-night);
+}
+
+.priceList ul {
+  list-style: none;
+}
+
+.priceList li {
+  display: grid;
+  grid-template-columns: auto minmax(1.5rem, 1fr) auto;
+  align-items: baseline;
+  gap: 0.75rem;
+  padding: 1rem 0;
+  border-bottom: 1px solid var(--line-on-night);
+}
+
+.priceListLabel {
+  font-size: var(--step-1);
+  font-weight: 600;
+}
+
+.priceListLabel small {
+  display: block;
+  margin-top: 0.2rem;
+  max-width: 34em;
+  font-size: 0.88rem;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--ink-on-night-2);
+}
+
+.priceListLeader {
+  align-self: end;
+  margin-bottom: 0.45rem;
+  border-bottom: 1px dotted rgb(246 242 235 / 0.35);
+}
+
+.priceListValue {
+  font-size: 1rem;
+  font-weight: 500;
+  white-space: nowrap;
+  color: var(--ink-on-night);
+}
+
+.priceListExtra {
+  grid-template-columns: minmax(0, 1fr) auto !important;
+}
+
+.priceListExtra .priceListLeader {
+  display: none;
+}
+
+.priceListExtra .priceListValue {
+  color: var(--accent-on-night);
+}
+
+@media (max-width: 599px) {
+  .priceListExtra {
+    grid-template-columns: 1fr !important;
+    gap: 0.25rem;
+  }
+
+  .priceListExtra .priceListValue {
+    grid-row: 1;
+  }
+}
+
+/* ---------- Conditions ---------- */
+.pricingConditions {
+  margin-top: clamp(3.5rem, 2.5rem + 4vw, 6rem);
+}
+
+.conditions {
+  list-style: none;
+  display: grid;
+  gap: 0;
+}
+
+@media (min-width: 700px) {
+  .conditions {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 2.5rem;
+  }
+}
+
+@media (min-width: 1100px) {
+  .conditions {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.conditions li {
+  padding: 1.5rem 0;
+  border-bottom: 1px solid var(--line-on-night);
+}
+
+.conditionsNum {
+  font-size: 0.78rem;
+  color: var(--accent-on-night);
+}
+
+.conditions h4 {
+  margin-top: 0.5rem;
+  font-size: var(--step-1);
+  font-weight: 650;
+}
+
+.conditions p {
+  margin-top: 0.4rem;
+  font-size: 0.95rem;
+  color: var(--ink-on-night-2);
+}
+
+.pricingTerms {
+  margin-top: 2rem;
+}

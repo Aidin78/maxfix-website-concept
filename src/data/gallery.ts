@@ -1,4 +1,4 @@
-import type { ImageMetadata } from 'astro';
+import type { StaticImageData } from 'next/image';
 import type { Lang } from '~/i18n';
 
 import bokhylla from '~/assets/images/services/platsbyggt.jpg';
@@ -25,7 +25,7 @@ export type WorkCategory = 'built-in' | 'carpentry' | 'outdoor' | 'walls' | 'int
 
 export interface WorkItem {
   id: string;
-  image: ImageMetadata;
+  image: StaticImageData;
   category: WorkCategory;
   /** Caption as written on maxfix.nu where one exists. */
   caption: Record<Lang, string>;

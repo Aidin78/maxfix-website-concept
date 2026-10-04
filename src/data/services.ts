@@ -1,5 +1,6 @@
-import type { ImageMetadata } from 'astro';
+import type { StaticImageData } from 'next/image';
 import type { Lang } from '~/i18n';
+import { serviceSlugs } from '~/i18n/routes';
 
 import snickerierImg from '~/assets/images/services/snickerier.jpg';
 import platsbyggtImg from '~/assets/images/services/platsbyggt.jpg';
@@ -32,7 +33,7 @@ export interface ServicePage {
 export interface Service {
   id: string;
   group: ServiceGroup;
-  image: ImageMetadata;
+  image: StaticImageData;
   imageAlt: L<string>;
   slug: L<string>;
   title: L<string>;
@@ -52,7 +53,7 @@ export const services: Service[] = [
       sv: 'Nybyggd vägg med lister och ram runt en äldre dörr',
       en: 'Newly built wall with mouldings and a frame around an old door',
     },
-    slug: { sv: 'snickerier', en: 'carpentry' },
+    slug: serviceSlugs['snickerier'],
     title: { sv: 'Snickerier', en: 'Carpentry' },
     short: {
       sv: 'Små snickerijobb är vår specialitet – inget jobb är för litet.',
@@ -146,7 +147,7 @@ export const services: Service[] = [
     group: 'inside',
     image: malerierImg,
     imageAlt: { sv: 'Ljust vardagsrum med nymålad vägg', en: 'Bright living room with a freshly painted wall' },
-    slug: { sv: 'malerier', en: 'painting' },
+    slug: serviceSlugs['malerier'],
     title: { sv: 'Målerier', en: 'Painting' },
     short: {
       sv: 'Ommålning av väggar och mindre rum – vi tar gärna de små uppdragen.',
@@ -193,7 +194,7 @@ export const services: Service[] = [
       sv: 'Mörk tapet med blommönster uppsatt på en lång vägg',
       en: 'Dark floral wallpaper hung along a long wall',
     },
-    slug: { sv: 'tapeter', en: 'wallpapering' },
+    slug: serviceSlugs['tapeter'],
     title: { sv: 'Tapeter', en: 'Wallpapering' },
     short: {
       sv: 'Fondväggar och mindre rum, med noggrant underarbete.',
@@ -237,7 +238,7 @@ export const services: Service[] = [
     group: 'inside',
     image: golvImg,
     imageAlt: { sv: 'Kök med ljust trägolv', en: 'Kitchen with a light wooden floor' },
-    slug: { sv: 'golv', en: 'flooring' },
+    slug: serviceSlugs['golv'],
     title: { sv: 'Golv', en: 'Flooring' },
     short: {
       sv: 'Golvläggning och slipning – även för riktigt små ytor.',
@@ -281,7 +282,7 @@ export const services: Service[] = [
     group: 'inside',
     image: elImg,
     imageAlt: { sv: 'Hängande taklampor och glödlampor', en: 'Pendant lamps and light bulbs' },
-    slug: { sv: 'el', en: 'electrical' },
+    slug: serviceSlugs['el'],
     title: { sv: 'El', en: 'Electrical' },
     short: {
       sv: 'Strömbrytare, dimmer, väggkontakter och lampor.',
@@ -343,7 +344,7 @@ export const services: Service[] = [
       sv: 'Uppsatta tavlor och gardinstång i ett sovrum',
       en: 'Pictures and a curtain rod put up in a bedroom',
     },
-    slug: { sv: 'mobler', en: 'furniture' },
+    slug: serviceSlugs['mobler'],
     title: { sv: 'Möbler', en: 'Furniture' },
     short: {
       sv: 'Montering, IKEA-möbler, hyllor, tavlor och möbelflytt i hemmet.',
@@ -399,7 +400,7 @@ export const services: Service[] = [
     group: 'inside',
     image: gardinerImg,
     imageAlt: { sv: 'Fönster med gardiner och en fönsterbänk', en: 'Window with curtains and a window seat' },
-    slug: { sv: 'gardiner', en: 'curtains' },
+    slug: serviceSlugs['gardiner'],
     title: { sv: 'Gardiner', en: 'Curtains' },
     short: {
       sv: 'Gardinstänger, nedtagning och uppsättning av gardiner.',
@@ -444,7 +445,7 @@ export const services: Service[] = [
       sv: 'Nytillverkad trägrind i en trädgård',
       en: 'Newly built wooden gate in a garden',
     },
-    slug: { sv: 'utomhussnickerier', en: 'outdoor-carpentry' },
+    slug: serviceSlugs['utomhussnickerier'],
     title: { sv: 'Utomhussnickerier', en: 'Outdoor carpentry' },
     short: {
       sv: 'Fasadplankor, altan, trappor, räcken och friggebodar.',
@@ -507,7 +508,7 @@ export const services: Service[] = [
       sv: 'Rött trähus på klippor vid havet',
       en: 'Red wooden house on the rocks by the sea',
     },
-    slug: { sv: 'fasadmalning', en: 'facade-painting' },
+    slug: serviceSlugs['fasadmalning'],
     title: { sv: 'Fasadmålning', en: 'Facade painting' },
     short: {
       sv: 'Utomhusmålning, altantvätt och inoljning, staket och bodar.',
@@ -563,7 +564,7 @@ export const services: Service[] = [
     group: 'home',
     image: stadImg,
     imageAlt: { sv: 'Ljust och städat kök med köksö', en: 'Bright, clean kitchen with an island' },
-    slug: { sv: 'stad', en: 'cleaning' },
+    slug: serviceSlugs['stad'],
     title: { sv: 'Städ', en: 'Cleaning' },
     short: {
       sv: 'Hemstädning i lägenhet eller villa – efter behov eller regelbundet.',
@@ -608,7 +609,7 @@ export const services: Service[] = [
     group: 'home',
     image: designImg,
     imageAlt: { sv: 'Inrett vardagsrum med mörkgrön vägg', en: 'Furnished living room with a dark green wall' },
-    slug: { sv: 'design-services', en: 'design-services' },
+    slug: serviceSlugs['design'],
     title: { sv: 'Design services', en: 'Design services' },
     short: {
       sv: 'Hjälp att planera och möblera – med förslag, inköpslista och 3D.',
@@ -675,7 +676,7 @@ export const services: Service[] = [
       sv: 'Vit platsbyggd bokhylla med skåp och TV-nisch',
       en: 'White built-in bookcase with cabinets and a TV niche',
     },
-    slug: { sv: 'platsbyggt', en: 'built-in-storage' },
+    slug: serviceSlugs['platsbyggt'],
     title: { sv: 'Platsbyggt', en: 'Built-in storage' },
     short: {
       sv: 'Platsbyggda bokhyllor och garderober – endast till fast pris.',

@@ -3,8 +3,10 @@
 Redesign of [maxfix.nu](https://www.maxfix.nu) for MaxFix (MaxExperten AB), a handyman and
 home-services company in Stockholm. Swedish is the primary language; English lives under `/en/`.
 
-Built with [Astro](https://astro.build) as a static site: plain CSS with design tokens, no UI
-framework and only a few small client-side scripts (menu, estimator, form, gallery).
+Built with [Next.js](https://nextjs.org) (App Router) and TypeScript. Styling is plain CSS: design
+tokens in `src/styles/globals.css` and CSS Modules per component – no UI framework. Every page is
+prerendered as static HTML; only the interactive parts (menu, price estimator, request form,
+gallery) run as client components.
 
 ## Getting started
 
@@ -12,29 +14,37 @@ Requires Node.js 22.12 or newer.
 
 ```sh
 npm install
-npm run dev      # local dev server on http://localhost:4321
-npm run build    # type-check (astro check) + static build to dist/
-npm run preview  # serve the production build
-npm run lint     # ESLint (TypeScript + Astro)
+npm run dev        # dev server on http://localhost:3000
+npm run build      # production build (includes type-checking)
+npm run start      # serve the production build
+npm run lint       # ESLint (Next.js core-web-vitals + TypeScript rules)
+npm run typecheck  # tsc --noEmit
 ```
+
+Deploy anywhere that runs Next.js (e.g. Vercel or `next start` on a Node server). Image
+optimisation uses `sharp`, which Next.js installs automatically.
 
 ## Structure
 
 ```
 src/
-  assets/images/      Photos from maxfix.nu (resized, metadata stripped) – optimised at build time
-  components/         Header, Footer, Icon, page templates (service, gallery, terms)
-  components/home/    Home page sections (hero, services, pricing, reviews, about, work, contact…)
-  data/               Content: company facts, services, pricing, tips, gallery, terms
-  i18n/               Language config, routes/anchors and all UI copy (sv + en)
-  layouts/            BaseLayout (meta, hreflang, JSON-LD, header/footer)
-  pages/              Routes – Swedish at the root, English under /en/
-  scripts/            Request-form behaviour and validation
-  styles/global.css   Design tokens, base typography, buttons, utilities
+  app/
+    (sv)/              Swedish routes + root layout (<html lang="sv">)
+    (en)/en/           English routes; (en)/layout.tsx is the English root layout
+    global-not-found.tsx, sitemap.ts, robots.ts
+  assets/images/       Photos from maxfix.nu (resized, metadata stripped)
+  components/          Header, Footer, page templates (service, gallery, terms) + CSS Modules
+  components/home/     Home page sections (hero, services, pricing, reviews, about, work, contact…)
+  data/                Content: company facts, services, pricing, tips, gallery, terms
+  i18n/                Languages, routes/anchors, service slugs and all UI copy (sv + en)
+  lib/                 Metadata helpers, service-route helpers, form validation
+  styles/globals.css   Design tokens, base typography, buttons, utilities
 ```
 
 Routes: `/`, `/tjanster/<slug>/`, `/galleri/`, `/villkor/` and the English equivalents
-`/en/`, `/en/services/<slug>/`, `/en/gallery/`, `/en/terms/`.
+`/en/`, `/en/services/<slug>/`, `/en/gallery/`, `/en/terms/`. The two languages use separate root
+layouts (route groups) so each page gets the right `lang` attribute; switching language is a full
+page load. Unknown URLs render `global-not-found.tsx` (enabled via `experimental.globalNotFound`).
 
 ## Content
 
@@ -49,7 +59,7 @@ already publishes.
 
 ## Request form
 
-The form posts `multipart/form-data` to the URL in `PUBLIC_FORM_ENDPOINT` (see `.env.example`).
+The form posts `multipart/form-data` to the URL in `NEXT_PUBLIC_FORM_ENDPOINT` (see `.env.example`).
 Fields: `services[]`, `message`, `files[]` (max 5 files, 10 MB each), `rot_rut`, `first_name`,
 `last_name`, `email`, `phone`, `address`, `personnummer`, `language` and a honeypot `website`.
 

@@ -1,0 +1,128 @@
+.workHead {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1.25rem;
+  margin-bottom: clamp(2.5rem, 2rem + 2vw, 4rem);
+}
+
+.workHead h2 {
+  margin-top: 1.25rem;
+  font-size: var(--step-4);
+}
+
+@media (min-width: 900px) {
+  .workHead {
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr) auto;
+    align-items: end;
+    gap: 3rem;
+  }
+}
+
+.workAll {
+  justify-self: start;
+}
+
+.workGrid {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(0.75rem, 0.5rem + 1vw, 1.25rem);
+}
+
+@media (min-width: 900px) {
+  .workGrid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-auto-rows: clamp(11rem, 8rem + 8vw, 17rem);
+  }
+
+  .workItem1 {
+    grid-column: span 2;
+    grid-row: span 2;
+  }
+
+  .workItem4,
+  .workItem5 {
+    grid-row: span 2;
+  }
+
+  .workItem6 {
+    grid-column: span 2;
+  }
+}
+
+.workItem1,
+.workItem6 {
+  grid-column: 1 / -1;
+}
+
+@media (min-width: 900px) {
+  .workItem1,
+  .workItem6 {
+    grid-column: span 2;
+  }
+}
+
+.workLink {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  text-decoration: none;
+}
+
+.workFrame {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  border-radius: var(--radius);
+  background: var(--paper-3);
+  aspect-ratio: 4 / 3;
+}
+
+@media (min-width: 900px) {
+  .workFrame {
+    aspect-ratio: auto;
+  }
+}
+
+.workFrame :global(img) {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.9s var(--ease-out);
+}
+
+.workLink:hover .workFrame :global(img) {
+  transform: scale(1.04);
+}
+
+.workCaption {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-top: 0.6rem;
+  font-size: 0.85rem;
+  line-height: 1.35;
+  color: var(--ink-2);
+}
+
+.workCaption > span:first-child {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  line-clamp: 1;
+  -webkit-box-orient: vertical;
+}
+
+.workCaption :global(.mono) {
+  flex: none;
+  font-size: 0.75rem;
+  color: var(--ink-3);
+}
+
+.workLink:hover .workCaption > span:first-child {
+  color: var(--ink);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}

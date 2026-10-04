@@ -545,6 +545,6 @@ export const ui = {
 
 export type UI = (typeof ui)[Lang];
 
-export function useTranslations(lang: Lang): UI {
+export function getDictionary(lang: Lang): UI {
   return ui[lang];
 }

@@ -1,0 +1,205 @@
+.estimator {
+  padding: clamp(1.5rem, 1rem + 2vw, 2.25rem);
+  background: var(--paper);
+  color: var(--ink);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 30px 60px -40px rgb(0 0 0 / 0.6);
+}
+
+.estimatorTitle {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: var(--step-2);
+}
+
+.estimatorTitle :global(svg) {
+  color: var(--accent);
+}
+
+.estimatorField {
+  margin: 1.5rem 0 0;
+  padding: 0;
+  border: 0;
+  min-width: 0;
+}
+
+.estimatorField legend,
+.estimatorLabel {
+  display: block;
+  margin-bottom: 0.6rem;
+  padding: 0;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.estimatorOptions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.5rem;
+}
+
+.estimatorOption {
+  position: relative;
+  cursor: pointer;
+}
+
+.estimatorOption input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.estimatorOption span {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 0.5rem;
+  min-height: 3rem;
+  padding: 0.75rem 0.85rem;
+  font-weight: 600;
+  font-size: 0.95rem;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius);
+  transition:
+    border-color 0.2s,
+    background-color 0.2s,
+    color 0.2s;
+}
+
+.estimatorOption small {
+  font-size: 0.78rem;
+  font-weight: 400;
+  color: var(--ink-3);
+}
+
+.estimatorOption:hover span {
+  border-color: var(--ink);
+}
+
+.estimatorOption input:checked + span {
+  border-color: var(--ink);
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.estimatorOption input:checked + span small {
+  color: var(--ink-on-night-2);
+}
+
+.estimatorOption input:focus-visible + span {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.estimatorStepper {
+  display: grid;
+  grid-template-columns: 3rem minmax(0, 1fr) auto 3rem;
+  align-items: center;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.estimatorStepper button {
+  display: grid;
+  place-items: center;
+  height: 3rem;
+  border: 0;
+  background: transparent;
+  transition: background-color 0.2s;
+}
+
+.estimatorStepper button:hover {
+  background: var(--paper-2);
+}
+
+.estimatorStepper button:first-child {
+  border-right: 1px solid var(--line);
+}
+
+.estimatorStepper button:last-child {
+  border-left: 1px solid var(--line);
+}
+
+.estimatorStepper input {
+  width: 100%;
+  height: 3rem;
+  padding: 0 0.25rem 0 1rem;
+  border: 0;
+  background: transparent;
+  font-size: var(--step-1);
+  font-weight: 700;
+  text-align: right;
+  appearance: textfield;
+  -moz-appearance: textfield;
+}
+
+.estimatorStepper input::-webkit-outer-spin-button,
+.estimatorStepper input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.estimatorStepper input:focus-visible {
+  outline-offset: -3px;
+}
+
+.estimatorUnit {
+  padding: 0 1rem 0 0.4rem;
+  color: var(--ink-3);
+}
+
+.estimatorResult {
+  margin: 1.75rem 0 0;
+  border-top: 1px solid var(--line-strong);
+}
+
+.estimatorResult > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.7rem 0;
+  border-bottom: 1px solid var(--line);
+  font-size: 0.95rem;
+}
+
+.estimatorResult dt {
+  color: var(--ink-2);
+}
+
+.estimatorResult dd {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.estimatorResult .estimatorTotal {
+  align-items: baseline;
+  border-bottom: 0;
+  padding-top: 1rem;
+}
+
+.estimatorTotal dt {
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.estimatorTotal dd {
+  font-family: var(--font-sans);
+  font-size: var(--step-3);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+}
+
+.estimatorNote {
+  margin-top: 0.75rem;
+  font-size: 0.82rem;
+  line-height: 1.5;
+  color: var(--ink-3);
+}
