@@ -120,6 +120,7 @@ export const ui = {
       badgeText: 'Sveriges bästa byggföretag på Reco',
       badgeDetail: '3:a 2025 · 2:a 2023',
       widgetTitle: 'MaxFix – omdömen på Reco',
+      readAll: 'Läs alla omdömen på Reco',
       follow: 'Följ våra jobb',
     },
     about: {
@@ -389,6 +390,7 @@ export const ui = {
       badgeText: "Sweden's best building companies on Reco",
       badgeDetail: '3rd 2025 · 2nd 2023',
       widgetTitle: 'MaxFix – reviews on Reco',
+      readAll: 'Read all reviews on Reco',
       follow: 'Follow our work',
     },
     about: {

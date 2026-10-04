@@ -28,7 +28,7 @@ export const company = {
     facebook: 'https://www.facebook.com/MaxFix.nu/',
   },
   reco: {
+    profile: 'https://www.reco.se/maxfix-stockholm',
     horizontalQuote: 'https://widget.reco.se/v2/widget/4026499?mode=HORIZONTAL_QUOTE',
-    small: 'https://widget.reco.se/v2/widget/4026499?mode=SMALL&inverted=false&border=true',
   },
 } as const;

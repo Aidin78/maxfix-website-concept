@@ -42,8 +42,10 @@ All business content (services, prices, ROT/RUT rules, conditions, terms, contac
 from the current maxfix.nu and is kept in `src/data/` and `src/i18n/ui.ts`. Contact details are
 defined once in `src/data/company.ts`.
 
-Customer reviews are not hard-coded: the reviews section embeds MaxFix's live Reco widgets, and the
-"Sveriges bästa byggföretag" badge is the image MaxFix already publishes.
+Customer reviews are not hard-coded: the reviews section embeds MaxFix's live Reco widget (reviews,
+total count and average rating stay current automatically) and links to the Reco profile
+(https://www.reco.se/maxfix-stockholm). The "Sveriges bästa byggföretag" badge is the image MaxFix
+already publishes.
 
 ## Request form
 
@@ -67,5 +69,8 @@ version was treated as the source of truth; the legal terms are reproduced as pu
   languages links to www.maxfix.se.
 - The English terms list +46 73-818 16 16 as phone number; everywhere else it is 08 4002 08 08.
 - The Swedish curtains page (/gardiner/) returns 404; its content was taken from the English page.
+- Reco's profile lists the awards "Sveriges bästa byggföretag" 3rd place 2025 and Top 10 2026. The
+  2nd place 2023 shown in MaxFix's badge image is not among the awards on the profile. The site keeps
+  the wording from maxfix.nu (3:a 2025 · 2:a 2023) until MaxFix confirms.
 - "Tips och råd" says no quotes are given, while the price section offers free quotes for larger
   jobs – the new copy says no quotes are given for smaller jobs.
