@@ -1,0 +1,368 @@
+---
+import Estimator from './Estimator.astro';
+import Icon from '~/components/Icon.astro';
+import { pricing, rates } from '~/data/pricing';
+import { type Lang, anchors, paths } from '~/i18n';
+import { useTranslations } from '~/i18n/ui';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang).pricing;
+const p = pricing[lang];
+---
+
+<section
+  id={anchors[lang].pricing}
+  class="section section--night on-night pricing"
+  data-section="pricing"
+  aria-labelledby="pricing-title"
+>
+  <div class="container">
+    <div class="pricing__top">
+      <header class="pricing__head" data-reveal>
+        <p class="eyebrow">{t.eyebrow}</p>
+        <h2 id="pricing-title">{t.title}</h2>
+        <p class="lead">{t.lead}</p>
+      </header>
+
+      <div class="pricing__board" data-reveal style="--reveal-delay: 0.1s">
+        <p class="pricing__from">
+          <span class="mono">{t.from}</span>
+          <strong>{rates.fromPerHour}</strong>
+          <span class="pricing__unit">{t.unit}</span>
+        </p>
+        <p class="pricing__from-note">{t.fromNote}</p>
+        <div class="pricing__deductions">
+          <div>
+            <strong>{rates.rutPercent} %</strong>
+            <span>{t.rut}<br />{t.deductionNote}</span>
+          </div>
+          <div>
+            <strong>{rates.rotPercent} %</strong>
+            <span>{t.rot}<br />{t.deductionNote}</span>
+          </div>
+        </div>
+        <p class="pricing__footnote">{t.footnote}</p>
+      </div>
+    </div>
+
+    <div class="pricing__body">
+      <div class="pricing__lists" data-reveal>
+        <div class="price-list">
+          <h3 class="price-list__title">{p.labourTitle}</h3>
+          <ul>
+            {
+              p.labour.map((row) => (
+                <li>
+                  <span class="price-list__label">
+                    {row.label}
+                    {row.detail && <small>{row.detail}</small>}
+                  </span>
+                  <span class="price-list__leader" aria-hidden="true" />
+                  <span class="price-list__value mono">
+                    {row.price} {t.perHour}
+                  </span>
+                </li>
+              ))
+            }
+          </ul>
+        </div>
+
+        <div class="price-list">
+          <h3 class="price-list__title">{p.extrasTitle}</h3>
+          <ul>
+            {
+              p.extras.map((row) => (
+                <li class="price-list__extra">
+                  <span class="price-list__label">
+                    {row.label}
+                    {row.detail && <small>{row.detail}</small>}
+                  </span>
+                  <span class="price-list__leader" aria-hidden="true" />
+                  <span class="price-list__value mono">{row.value}</span>
+                </li>
+              ))
+            }
+          </ul>
+        </div>
+      </div>
+
+      <div class="pricing__estimator" data-reveal style="--reveal-delay: 0.1s">
+        <Estimator lang={lang} />
+      </div>
+    </div>
+
+    <div class="pricing__conditions" data-reveal>
+      <h3 class="price-list__title">{p.conditionsTitle}</h3>
+      <ol class="conditions">
+        {
+          p.conditions.map((c, i) => (
+            <li>
+              <span class="mono conditions__num">{String(i + 1).padStart(2, '0')}</span>
+              <h4>{c.title}</h4>
+              <p>{c.text}</p>
+            </li>
+          ))
+        }
+      </ol>
+      <a href={paths.terms(lang)} class="text-link pricing__terms">
+        {t.fullTerms}
+        <Icon name="arrow" size={18} />
+      </a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .pricing__top {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 2.5rem;
+    align-items: end;
+  }
+
+  @media (min-width: 1000px) {
+    .pricing__top {
+      grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+      gap: clamp(3rem, 6vw, 7rem);
+    }
+  }
+
+  .pricing__head h2 {
+    margin-top: 1.25rem;
+    font-size: var(--step-4);
+  }
+
+  .pricing__head .lead {
+    margin-top: 1.25rem;
+  }
+
+  .pricing__board {
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--line-on-night);
+  }
+
+  .pricing__from {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 0.4rem 0.8rem;
+  }
+
+  .pricing__from .mono {
+    font-size: 0.9rem;
+    color: var(--ink-on-night-2);
+  }
+
+  .pricing__from strong {
+    font-size: clamp(4.5rem, 3rem + 7vw, 8.5rem);
+    font-weight: 800;
+    line-height: 0.85;
+    letter-spacing: -0.06em;
+    color: var(--ink-on-night);
+  }
+
+  .pricing__unit {
+    font-size: var(--step-2);
+    font-weight: 600;
+  }
+
+  .pricing__from-note {
+    margin-top: 0.75rem;
+    font-weight: 600;
+    color: var(--accent-on-night);
+  }
+
+  .pricing__deductions {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr));
+    gap: 1px;
+    margin-top: 1.75rem;
+    background: var(--line-on-night);
+    border: 1px solid var(--line-on-night);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+
+  .pricing__deductions div {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    padding: 1rem 1.1rem;
+    background: var(--night);
+  }
+
+  .pricing__deductions strong {
+    font-size: var(--step-3);
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    white-space: nowrap;
+  }
+
+  .pricing__deductions span {
+    font-size: 0.85rem;
+    line-height: 1.35;
+    color: var(--ink-on-night-2);
+  }
+
+  .pricing__footnote {
+    margin-top: 1rem;
+    font-size: 0.85rem;
+    color: var(--ink-on-night-2);
+  }
+
+  /* ---------- Lists + estimator ---------- */
+  .pricing__body {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 3rem;
+    margin-top: clamp(3.5rem, 2.5rem + 4vw, 6rem);
+  }
+
+  @media (min-width: 1000px) {
+    .pricing__body {
+      grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+      gap: clamp(3rem, 6vw, 7rem);
+      align-items: start;
+    }
+
+    .pricing__estimator {
+      position: sticky;
+      top: calc(var(--header-h) + 2rem);
+    }
+  }
+
+  .pricing__lists {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 3rem;
+  }
+
+  .price-list__title {
+    padding-bottom: 0.85rem;
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ink-on-night-2);
+    border-bottom: 1px solid var(--line-on-night);
+  }
+
+  .price-list ul {
+    list-style: none;
+  }
+
+  .price-list li {
+    display: grid;
+    grid-template-columns: auto minmax(1.5rem, 1fr) auto;
+    align-items: baseline;
+    gap: 0.75rem;
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--line-on-night);
+  }
+
+  .price-list__label {
+    font-size: var(--step-1);
+    font-weight: 600;
+  }
+
+  .price-list__label small {
+    display: block;
+    margin-top: 0.2rem;
+    max-width: 34em;
+    font-size: 0.88rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: var(--ink-on-night-2);
+  }
+
+  .price-list__leader {
+    align-self: end;
+    margin-bottom: 0.45rem;
+    border-bottom: 1px dotted rgb(246 242 235 / 0.35);
+  }
+
+  .price-list__value {
+    font-size: 1rem;
+    font-weight: 500;
+    white-space: nowrap;
+    color: var(--ink-on-night);
+  }
+
+  .price-list__extra {
+    grid-template-columns: minmax(0, 1fr) auto !important;
+  }
+
+  .price-list__extra .price-list__leader {
+    display: none;
+  }
+
+  .price-list__extra .price-list__value {
+    color: var(--accent-on-night);
+  }
+
+  @media (max-width: 599px) {
+    .price-list__extra {
+      grid-template-columns: 1fr !important;
+      gap: 0.25rem;
+    }
+
+    .price-list__extra .price-list__value {
+      grid-row: 1;
+    }
+  }
+
+  /* ---------- Conditions ---------- */
+  .pricing__conditions {
+    margin-top: clamp(3.5rem, 2.5rem + 4vw, 6rem);
+  }
+
+  .conditions {
+    list-style: none;
+    display: grid;
+    gap: 0;
+  }
+
+  @media (min-width: 700px) {
+    .conditions {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      column-gap: 2.5rem;
+    }
+  }
+
+  @media (min-width: 1100px) {
+    .conditions {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  .conditions li {
+    padding: 1.5rem 0;
+    border-bottom: 1px solid var(--line-on-night);
+  }
+
+  .conditions__num {
+    font-size: 0.78rem;
+    color: var(--accent-on-night);
+  }
+
+  .conditions h4 {
+    margin-top: 0.5rem;
+    font-size: var(--step-1);
+    font-weight: 650;
+  }
+
+  .conditions p {
+    margin-top: 0.4rem;
+    font-size: 0.95rem;
+    color: var(--ink-on-night-2);
+  }
+
+  .pricing__terms {
+    margin-top: 2rem;
+  }
+</style>

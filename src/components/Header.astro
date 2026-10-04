@@ -1,0 +1,484 @@
+---
+import Icon from './Icon.astro';
+import Logo from './Logo.astro';
+import { company } from '~/data/company';
+import { type Lang, paths } from '~/i18n';
+import { useTranslations } from '~/i18n/ui';
+
+interface Props {
+  lang: Lang;
+  alternateUrl: string;
+}
+
+const { lang, alternateUrl } = Astro.props;
+const t = useTranslations(lang);
+
+const links = [
+  { label: t.nav.services, href: paths.section(lang, 'services'), section: 'services' },
+  { label: t.nav.pricing, href: paths.section(lang, 'pricing'), section: 'pricing' },
+  { label: t.nav.about, href: paths.section(lang, 'about'), section: 'about' },
+  { label: t.nav.reviews, href: paths.section(lang, 'reviews'), section: 'reviews' },
+  { label: t.nav.gallery, href: paths.gallery(lang), section: 'gallery' },
+  { label: t.nav.contact, href: paths.section(lang, 'contact'), section: 'contact' },
+];
+
+const contactHref = paths.section(lang, 'contact');
+---
+
+<div class="topbar" lang={lang}>
+  <div class="container topbar__inner">
+    <p class="topbar__text">
+      <Icon name="pin" size={15} />
+      <span>{t.hero.eyebrow}</span>
+    </p>
+    <div class="topbar__links">
+      <a href={company.phone.href} class="topbar__phone">
+        <Icon name="phone" size={15} />
+        <span>{company.phone.display}</span>
+        <span class="topbar__muted">· {t.hero.hours}</span>
+      </a>
+      <a href={`mailto:${company.email}`}>
+        <Icon name="mail" size={15} />
+        <span>{company.email}</span>
+      </a>
+      <a href={alternateUrl} hreflang={lang === 'sv' ? 'en' : 'sv'} class="topbar__lang">
+        {t.nav.language}
+      </a>
+    </div>
+  </div>
+</div>
+
+<header class="header" data-header>
+  <div class="container header__inner">
+    <a href={paths.home(lang)} class="header__logo" aria-label={t.nav.home}>
+      <Logo height={46} />
+    </a>
+
+    <nav class="header__nav" aria-label={t.nav.label}>
+      <ul>
+        {
+          links.map((link) => (
+            <li>
+              <a href={link.href} data-nav-link={link.section}>
+                {link.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <div class="header__actions">
+      <a href={alternateUrl} hreflang={lang === 'sv' ? 'en' : 'sv'} class="header__lang" aria-label={t.nav.language}>
+        {t.nav.languageShort}
+      </a>
+      <a href={contactHref} class="btn header__cta">{t.nav.cta}</a>
+      <a href={company.phone.href} class="header__icon-btn header__call" aria-label={`${t.nav.call}: ${company.phone.display}`}>
+        <Icon name="phone" size={20} />
+      </a>
+      <button
+        type="button"
+        class="header__icon-btn header__toggle"
+        aria-expanded="false"
+        aria-controls="mobile-menu"
+        data-menu-toggle
+      >
+        <span class="visually-hidden" data-menu-label data-open={t.nav.menu} data-close={t.nav.close}>{t.nav.menu}</span>
+        <Icon name="menu" size={22} class="icon-open" />
+        <Icon name="close" size={22} class="icon-close" />
+      </button>
+    </div>
+  </div>
+
+  <div id="mobile-menu" class="mobile-menu" hidden data-menu>
+    <nav class="container" aria-label={t.nav.label}>
+      <ul class="mobile-menu__links">
+        {
+          links.map((link, i) => (
+            <li style={`--i:${i}`}>
+              <a href={link.href} data-menu-link>
+                <span class="mono">{String(i + 1).padStart(2, '0')}</span>
+                {link.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+      <div class="mobile-menu__footer">
+        <a href={contactHref} class="btn" data-menu-link>
+          {t.nav.cta}
+          <Icon name="arrow" class="arrow" />
+        </a>
+        <a href={company.phone.href} class="btn btn--ghost">
+          <Icon name="phone" />
+          {company.phone.display}
+        </a>
+        <p class="mobile-menu__meta">
+          <a href={`mailto:${company.email}`}>{company.email}</a>
+          <a href={alternateUrl} hreflang={lang === 'sv' ? 'en' : 'sv'}>{t.nav.language}</a>
+        </p>
+      </div>
+    </nav>
+  </div>
+</header>
+
+<style>
+  .topbar {
+    background: var(--night);
+    color: var(--ink-on-night-2);
+    font-size: 0.8125rem;
+  }
+
+  .topbar__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    min-height: 2.5rem;
+  }
+
+  .topbar__text,
+  .topbar a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+  }
+
+  .topbar__links {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+  }
+
+  .topbar a {
+    color: var(--ink-on-night);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .topbar a:hover {
+    color: var(--accent-on-night);
+  }
+
+  .topbar a:focus-visible {
+    outline-color: var(--accent-on-night);
+  }
+
+  .topbar__muted {
+    color: var(--ink-on-night-2);
+  }
+
+  .topbar__lang {
+    padding-left: 1.5rem;
+    border-left: 1px solid var(--line-on-night);
+  }
+
+  @media (max-width: 899px) {
+    .topbar {
+      display: none;
+    }
+  }
+
+  /* ---------- Main bar ---------- */
+  .header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: var(--paper);
+    border-bottom: 1px solid transparent;
+    transition:
+      border-color 0.3s,
+      box-shadow 0.3s;
+  }
+
+  .header.is-scrolled {
+    border-bottom-color: var(--line);
+    box-shadow: 0 6px 24px -18px rgb(20 35 43 / 0.45);
+  }
+
+  .header__inner {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    min-height: var(--header-h);
+  }
+
+  .header__logo {
+    flex: none;
+    border-radius: var(--radius);
+  }
+
+  .header__nav {
+    margin-left: auto;
+  }
+
+  .header__nav ul {
+    display: flex;
+    gap: 0.25rem;
+    list-style: none;
+  }
+
+  .header__nav a {
+    position: relative;
+    display: block;
+    padding: 0.6rem 0.75rem;
+    font-weight: 500;
+    font-size: 0.975rem;
+    text-decoration: none;
+    color: var(--ink-2);
+    transition: color 0.2s;
+  }
+
+  .header__nav a::after {
+    content: '';
+    position: absolute;
+    left: 0.75rem;
+    right: 0.75rem;
+    bottom: 0.3rem;
+    height: 2px;
+    background: var(--accent);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.35s var(--ease-out);
+  }
+
+  .header__nav a:hover,
+  .header__nav a.is-active {
+    color: var(--ink);
+  }
+
+  .header__nav a:hover::after,
+  .header__nav a.is-active::after {
+    transform: scaleX(1);
+  }
+
+  .header__actions {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .header__lang {
+    display: inline-grid;
+    place-items: center;
+    min-width: 2.75rem;
+    height: 2.75rem;
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    transition:
+      border-color 0.2s,
+      background-color 0.2s;
+  }
+
+  .header__lang:hover {
+    border-color: var(--ink);
+  }
+
+  .header__cta {
+    min-height: 2.75rem;
+    padding-block: 0.6rem;
+  }
+
+  .header__icon-btn {
+    display: none;
+    place-items: center;
+    width: 2.9rem;
+    height: 2.9rem;
+    padding: 0;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: transparent;
+    color: var(--ink);
+    transition:
+      background-color 0.2s,
+      border-color 0.2s;
+  }
+
+  .header__icon-btn:hover {
+    border-color: var(--ink);
+  }
+
+  .header__toggle {
+    background: var(--ink);
+    border-color: var(--ink);
+    color: var(--paper);
+  }
+
+  .header__toggle:hover {
+    background: var(--accent);
+    border-color: var(--accent);
+  }
+
+  .header__toggle :global(.icon-close),
+  .header__toggle[aria-expanded='true'] :global(.icon-open) {
+    display: none;
+  }
+
+  .header__toggle[aria-expanded='true'] :global(.icon-close) {
+    display: block;
+  }
+
+  @media (max-width: 1099px) {
+    .header__nav,
+    .header__cta {
+      display: none;
+    }
+
+    .header__actions {
+      margin-left: auto;
+    }
+
+    .header__icon-btn {
+      display: inline-grid;
+    }
+  }
+
+  @media (max-width: 899px) {
+    .header .header__lang {
+      display: none;
+    }
+  }
+
+  /* ---------- Mobile menu ---------- */
+  .mobile-menu {
+    position: fixed;
+    inset: var(--header-h) 0 0;
+    background: var(--paper);
+    border-top: 1px solid var(--line);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding-block: 1.5rem 2.5rem;
+  }
+
+  .mobile-menu:not([hidden]) {
+    animation: menu-in 0.35s var(--ease-out);
+  }
+
+  .mobile-menu__links {
+    list-style: none;
+    border-top: 1px solid var(--line);
+  }
+
+  .mobile-menu__links li {
+    border-bottom: 1px solid var(--line);
+  }
+
+  .mobile-menu:not([hidden]) .mobile-menu__links li {
+    animation: item-in 0.5s var(--ease-out) both;
+    animation-delay: calc(var(--i) * 40ms + 60ms);
+  }
+
+  .mobile-menu__links a {
+    display: flex;
+    align-items: baseline;
+    gap: 1rem;
+    padding: 1rem 0.25rem;
+    font-size: var(--step-2);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    text-decoration: none;
+  }
+
+  .mobile-menu__links .mono {
+    font-size: 0.8rem;
+    color: var(--ink-3);
+  }
+
+  .mobile-menu__footer {
+    display: grid;
+    gap: 0.75rem;
+    margin-top: 2rem;
+  }
+
+  .mobile-menu__meta {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 0.75rem;
+    font-size: 0.95rem;
+  }
+
+  @keyframes menu-in {
+    from {
+      opacity: 0;
+      transform: translateY(-8px);
+    }
+  }
+
+  @keyframes item-in {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+  }
+
+  @media (min-width: 1100px) {
+    .mobile-menu {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  const header = document.querySelector<HTMLElement>('[data-header]');
+  const toggle = document.querySelector<HTMLButtonElement>('[data-menu-toggle]');
+  const menu = document.querySelector<HTMLElement>('[data-menu]');
+  const label = document.querySelector<HTMLElement>('[data-menu-label]');
+
+  if (header) {
+    const onScroll = () => header.classList.toggle('is-scrolled', window.scrollY > 8);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+  }
+
+  function setMenu(open: boolean) {
+    if (!toggle || !menu) return;
+    toggle.setAttribute('aria-expanded', String(open));
+    menu.hidden = !open;
+    document.documentElement.style.overflow = open ? 'hidden' : '';
+    if (label) label.textContent = (open ? label.dataset.close : label.dataset.open) ?? '';
+    if (open) menu.querySelector<HTMLElement>('a')?.focus();
+  }
+
+  toggle?.addEventListener('click', () => setMenu(toggle.getAttribute('aria-expanded') !== 'true'));
+
+  menu?.querySelectorAll('[data-menu-link]').forEach((link) => {
+    link.addEventListener('click', () => setMenu(false));
+  });
+
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && toggle?.getAttribute('aria-expanded') === 'true') {
+      setMenu(false);
+      toggle.focus();
+    }
+  });
+
+  window.matchMedia('(min-width: 1100px)').addEventListener('change', (e) => {
+    if (e.matches) setMenu(false);
+  });
+
+  // Highlight the nav link for the section currently in view (home page only).
+  const navLinks = document.querySelectorAll<HTMLAnchorElement>('[data-nav-link]');
+  const sections = document.querySelectorAll<HTMLElement>('[data-section]');
+  if (sections.length && 'IntersectionObserver' in window) {
+    const inView = new Set<string>();
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          const key = (entry.target as HTMLElement).dataset.section ?? '';
+          if (entry.isIntersecting) inView.add(key);
+          else inView.delete(key);
+        });
+        const active = Array.from(inView).pop();
+        navLinks.forEach((link) => link.classList.toggle('is-active', link.dataset.navLink === active));
+      },
+      { rootMargin: '-45% 0px -50% 0px' },
+    );
+    sections.forEach((section) => observer.observe(section));
+  }
+</script>

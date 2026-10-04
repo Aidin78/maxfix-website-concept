@@ -1,0 +1,167 @@
+---
+import Icon from '~/components/Icon.astro';
+import RequestForm from './RequestForm.astro';
+import { company } from '~/data/company';
+import { type Lang, anchors } from '~/i18n';
+import { useTranslations } from '~/i18n/ui';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang).contact;
+---
+
+<section id={anchors[lang].contact} class="section contact" data-section="contact" aria-labelledby="contact-title">
+  <div class="container contact__grid">
+    <div class="contact__aside">
+      <header data-reveal>
+        <p class="eyebrow">{t.eyebrow}</p>
+        <h2 id="contact-title">{t.title}</h2>
+        <p class="lead">{t.lead}</p>
+      </header>
+
+      <div class="contact__direct" data-reveal>
+        <p class="contact__direct-title mono">{t.direct}</p>
+        <a href={company.phone.href} class="contact__phone">
+          <Icon name="phone" size={22} />
+          {company.phone.display}
+        </a>
+        <p class="contact__hours">
+          <Icon name="clock" size={16} />
+          {t.phoneHours}
+        </p>
+        <a href={`mailto:${company.email}`} class="contact__mail">
+          <Icon name="mail" size={20} />
+          {company.email}
+        </a>
+      </div>
+
+      <dl class="contact__company" data-reveal>
+        <div>
+          <dt class="mono">{t.company}</dt>
+          <dd>
+            {company.legalName}<br />
+            {company.address.street}<br />
+            {`${company.address.postalCode} ${company.address.locality}`}
+          </dd>
+        </div>
+        <div>
+          <dt class="mono">{t.orgNr}</dt>
+          <dd>{company.orgNumber}</dd>
+        </div>
+      </dl>
+    </div>
+
+    <div class="contact__form" data-reveal>
+      <RequestForm lang={lang} />
+    </div>
+  </div>
+</section>
+
+<style>
+  .contact__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 3rem;
+  }
+
+  @media (min-width: 1000px) {
+    .contact__grid {
+      grid-template-columns: minmax(0, 4fr) minmax(0, 7fr);
+      gap: clamp(3rem, 5vw, 6rem);
+      align-items: start;
+    }
+
+    .contact__aside {
+      position: sticky;
+      top: calc(var(--header-h) + 2rem);
+    }
+  }
+
+  .contact__aside h2 {
+    margin-top: 1.25rem;
+    font-size: var(--step-4);
+  }
+
+  .contact__aside .lead {
+    margin-top: 1.25rem;
+  }
+
+  .contact__direct {
+    display: grid;
+    gap: 0.6rem;
+    margin-top: 2.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--line-strong);
+  }
+
+  .contact__direct-title {
+    font-size: 0.8rem;
+    color: var(--ink-3);
+  }
+
+  .contact__phone,
+  .contact__mail {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    text-decoration: none;
+    width: fit-content;
+  }
+
+  .contact__phone {
+    font-size: var(--step-3);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    transition: color 0.2s;
+  }
+
+  .contact__phone:hover,
+  .contact__mail:hover {
+    color: var(--accent);
+  }
+
+  .contact__phone :global(svg) {
+    color: var(--accent);
+  }
+
+  .contact__hours {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    font-size: 0.9rem;
+    color: var(--ink-3);
+  }
+
+  .contact__mail {
+    margin-top: 0.4rem;
+    font-size: var(--step-1);
+    font-weight: 600;
+    transition: color 0.2s;
+  }
+
+  .contact__company {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 1.5rem;
+    margin: 2.5rem 0 0;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--line);
+    font-size: 0.92rem;
+  }
+
+  .contact__company dt {
+    margin-bottom: 0.35rem;
+    font-size: 0.75rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+
+  .contact__company dd {
+    margin: 0;
+    color: var(--ink-2);
+  }
+</style>

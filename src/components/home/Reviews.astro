@@ -1,0 +1,184 @@
+---
+import { Image } from 'astro:assets';
+import Icon from '~/components/Icon.astro';
+import recoBadge from '~/assets/images/reco-badge.png';
+import { company } from '~/data/company';
+import { type Lang, anchors } from '~/i18n';
+import { useTranslations } from '~/i18n/ui';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang).reviews;
+---
+
+<section id={anchors[lang].reviews} class="section reviews" data-section="reviews" aria-labelledby="reviews-title">
+  <div class="container">
+    <div class="reviews__top">
+      <header class="reviews__head" data-reveal>
+        <p class="eyebrow">{t.eyebrow}</p>
+        <h2 id="reviews-title">{t.title}</h2>
+        <p class="lead">{t.lead}</p>
+      </header>
+
+      <figure class="reviews__award" data-reveal style="--reveal-delay: 0.1s">
+        <Image src={recoBadge} alt={t.badgeAlt} width={300} densities={[1, 2]} class="reviews__badge" />
+        <figcaption>
+          <strong>{t.badgeText}</strong>
+          <span class="mono">{t.badgeDetail}</span>
+        </figcaption>
+      </figure>
+    </div>
+
+    <div class="reviews__widget" data-reveal>
+      <span class="reviews__placeholder mono" aria-hidden="true">Reco</span>
+      <iframe
+        src={company.reco.horizontalQuote}
+        title={t.widgetTitle}
+        loading="lazy"
+        width="100%"
+        height="225"></iframe>
+    </div>
+
+    <div class="reviews__bottom" data-reveal>
+      <div class="reviews__small">
+        <iframe src={company.reco.small} title={t.widgetTitle} loading="lazy" width="230" height="150"></iframe>
+      </div>
+      <div class="reviews__social">
+        <p class="eyebrow">{t.follow}</p>
+        <div class="reviews__social-links">
+          <a href={company.social.instagram} target="_blank" rel="noopener" class="btn btn--ghost">
+            <Icon name="instagram" />
+            @maxfixstockholm
+          </a>
+          <a href={company.social.facebook} target="_blank" rel="noopener" class="btn btn--ghost">
+            <Icon name="facebook" />
+            MaxFix.nu
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .reviews__top {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 2.5rem;
+    align-items: end;
+  }
+
+  @media (min-width: 900px) {
+    .reviews__top {
+      grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+      gap: 4rem;
+    }
+  }
+
+  .reviews__head h2 {
+    margin-top: 1.25rem;
+    font-size: var(--step-4);
+  }
+
+  .reviews__head .lead {
+    margin-top: 1.25rem;
+  }
+
+  .reviews__award {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    margin: 0;
+    padding: 1.25rem 1.5rem 1.25rem 1.25rem;
+    background: var(--white);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+  }
+
+  .reviews__badge {
+    flex: none;
+    width: clamp(120px, 30vw, 170px);
+    height: auto;
+  }
+
+  .reviews__award figcaption {
+    display: grid;
+    gap: 0.4rem;
+  }
+
+  .reviews__award strong {
+    font-size: var(--step-1);
+    line-height: 1.25;
+    letter-spacing: -0.015em;
+  }
+
+  .reviews__award .mono {
+    font-size: 0.85rem;
+    color: var(--accent);
+  }
+
+  .reviews__widget {
+    position: relative;
+    margin-top: clamp(2.5rem, 2rem + 2vw, 4rem);
+    padding: clamp(0.75rem, 0.5rem + 1vw, 1.5rem);
+    background: var(--white);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    min-height: 225px;
+  }
+
+  .reviews__widget::before {
+    content: '';
+    position: absolute;
+    top: -1px;
+    left: 2rem;
+    width: 4rem;
+    height: 3px;
+    background: var(--accent);
+  }
+
+  .reviews__placeholder {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    font-size: 0.8rem;
+    color: var(--ink-3);
+  }
+
+  .reviews__widget iframe {
+    position: relative;
+    border: 0;
+    width: 100%;
+    overflow: hidden;
+  }
+
+  .reviews__bottom {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2rem;
+    margin-top: 2rem;
+  }
+
+  .reviews__small iframe {
+    border: 0;
+    overflow: hidden;
+    max-width: 100%;
+  }
+
+  .reviews__social {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .reviews__social-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+</style>

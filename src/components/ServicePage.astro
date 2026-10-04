@@ -1,0 +1,623 @@
+---
+import { Image } from 'astro:assets';
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import Icon from './Icon.astro';
+import { company } from '~/data/company';
+import { type Service, serviceGroups, services } from '~/data/services';
+import { work } from '~/data/gallery';
+import { type Lang, paths } from '~/i18n';
+import { useTranslations } from '~/i18n/ui';
+
+interface Props {
+  lang: Lang;
+  service: Service;
+}
+
+const { lang, service } = Astro.props;
+const t = useTranslations(lang);
+const page = service.page[lang];
+const isFixedPrice = service.id === 'platsbyggt';
+const groupLabel =
+  serviceGroups.find((g) => g.id === service.group)?.label[lang] ?? t.services.featuredEyebrow;
+const others = services.filter((s) => s.id !== service.id);
+const builtInWork = isFixedPrice ? work.filter((w) => w.category === 'built-in' && w.id !== 'bokhylla') : [];
+
+const title = `${page.heading} | MaxFix`;
+const description = `${page.intro[0]?.slice(0, 150).trim()}…`;
+---
+
+<BaseLayout
+  lang={lang}
+  title={title}
+  description={description}
+  alternates={{ sv: paths.service('sv', service.slug.sv), en: paths.service('en', service.slug.en) }}
+>
+  <article class="svc">
+    <div class="container">
+      <nav class="crumbs mono" aria-label="Breadcrumb">
+        <ol>
+          <li><a href={paths.home(lang)}>MaxFix</a></li>
+          <li><a href={paths.section(lang, 'services')}>{t.servicePage.breadcrumb}</a></li>
+          <li aria-current="page">{service.title[lang]}</li>
+        </ol>
+      </nav>
+
+      <header class="svc__hero">
+        <div class="svc__intro">
+          <p class="eyebrow">{groupLabel}</p>
+          <h1>{page.heading}</h1>
+          <p class="lead">{page.intro[0]}</p>
+          {page.intro.slice(1).map((p) => <p class="svc__p">{p}</p>)}
+          <div class="svc__actions">
+            <a href={paths.section(lang, 'contact')} class="btn">
+              {t.nav.cta}
+              <Icon name="arrow" class="arrow" />
+            </a>
+            <a href={company.phone.href} class="btn btn--ghost">
+              <Icon name="phone" />
+              {company.phone.display}
+            </a>
+          </div>
+        </div>
+        <div class="svc__media">
+          <Image
+            src={service.image}
+            alt={service.imageAlt[lang]}
+            widths={[560, 840, 1120]}
+            sizes="(min-width: 1000px) 45vw, 100vw"
+            loading="eager"
+            fetchpriority="high"
+          />
+        </div>
+      </header>
+
+      <div class="ruler svc__ruler" aria-hidden="true"></div>
+
+      <div class="svc__body">
+        <div class="svc__main">
+          <section aria-labelledby="help-with">
+            <h2 id="help-with" class="svc__h2">{t.servicePage.helpWith}</h2>
+            <ul class="checklist">
+              {
+                page.list.map((item) => (
+                  <li>
+                    <Icon name="check" size={18} />
+                    <span>{item}</span>
+                  </li>
+                ))
+              }
+            </ul>
+          </section>
+
+          {
+            page.sections && (
+              <div class="svc__sections">
+                {page.sections.map((s) => (
+                  <section>
+                    <h3>{s.title}</h3>
+                    <p>{s.text}</p>
+                  </section>
+                ))}
+              </div>
+            )
+          }
+
+          {
+            page.conditions && (
+              <section class="svc__conditions" aria-labelledby="conditions">
+                <h2 id="conditions" class="svc__h2">
+                  {t.servicePage.conditions}
+                </h2>
+                <dl>
+                  {page.conditions.map((c) => (
+                    <div>
+                      <dt>{c.title}</dt>
+                      <dd>{c.text}</dd>
+                    </div>
+                  ))}
+                </dl>
+              </section>
+            )
+          }
+
+          {
+            page.tips && (
+              <section aria-labelledby="design-tips">
+                <h2 id="design-tips" class="svc__h2">
+                  {t.servicePage.designTips}
+                </h2>
+                <ol class="svc__tips">
+                  {page.tips.map((tip, i) => (
+                    <li>
+                      <span class="mono">{String(i + 1).padStart(2, '0')}</span>
+                      <div>
+                        <h3>{tip.title}</h3>
+                        <p>{tip.text}</p>
+                      </div>
+                    </li>
+                  ))}
+                </ol>
+              </section>
+            )
+          }
+
+          <section aria-labelledby="good-to-know">
+            <h2 id="good-to-know" class="svc__h2">{t.servicePage.goodToKnow}</h2>
+            <ul class="svc__notes">
+              {page.notes.map((note) => <li>{note}</li>)}
+            </ul>
+          </section>
+
+          {
+            builtInWork.length > 0 && (
+              <ul class="svc__work">
+                {builtInWork.map((item) => (
+                  <li>
+                    <figure>
+                      <Image src={item.image} alt={item.caption[lang]} widths={[400, 640]} sizes="(min-width: 700px) 30vw, 50vw" />
+                      <figcaption>{item.caption[lang]}</figcaption>
+                    </figure>
+                  </li>
+                ))}
+              </ul>
+            )
+          }
+        </div>
+
+        <aside class="svc__aside">
+          <div class="price-card">
+            <p class="price-card__label mono">{t.servicePage.priceTitle}</p>
+            <p class="price-card__value">
+              {isFixedPrice ? t.servicePage.priceFixed : (service.priceNote?.[lang] ?? t.servicePage.priceGeneral)}
+            </p>
+            {
+              !isFixedPrice && (
+                <ul>
+                  {t.servicePage.priceLines.map((line) => (
+                    <li>{line}</li>
+                  ))}
+                </ul>
+              )
+            }
+            <a href={paths.section(lang, 'pricing')} class="text-link">
+              {t.servicePage.pricingLink}
+              <Icon name="arrow" size={18} />
+            </a>
+          </div>
+
+          <div class="cta-card on-night">
+            <h2>{t.servicePage.ctaTitle}</h2>
+            <p>{t.servicePage.ctaText}</p>
+            <a href={paths.section(lang, 'contact')} class="btn">
+              {t.nav.cta}
+              <Icon name="arrow" class="arrow" />
+            </a>
+            <a href={company.phone.href} class="cta-card__phone">
+              <Icon name="phone" size={18} />
+              {company.phone.display}
+            </a>
+          </div>
+        </aside>
+      </div>
+    </div>
+
+    <section class="section section--sand svc__others" aria-labelledby="others">
+      <div class="container">
+        <h2 id="others" class="svc__h2">{t.servicePage.other}</h2>
+        <ul class="others">
+          {
+            others.map((s) => (
+              <li>
+                <a href={paths.service(lang, s.slug[lang])}>
+                  <span>{s.title[lang]}</span>
+                  <Icon name="arrow" size={18} />
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </section>
+  </article>
+</BaseLayout>
+
+<style>
+  .svc {
+    padding-top: 1.5rem;
+  }
+
+  .crumbs ol {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    list-style: none;
+    font-size: 0.8rem;
+    color: var(--ink-3);
+  }
+
+  .crumbs li + li::before {
+    content: '/';
+    margin-right: 0.4rem;
+    color: var(--line-strong);
+  }
+
+  .crumbs a {
+    color: var(--ink-2);
+    text-decoration: none;
+  }
+
+  .crumbs a:hover {
+    text-decoration: underline;
+  }
+
+  .crumbs [aria-current] {
+    color: var(--ink);
+  }
+
+  .svc__hero {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 2.5rem;
+    padding-block: clamp(2rem, 1.5rem + 3vw, 4rem);
+    align-items: center;
+  }
+
+  @media (min-width: 1000px) {
+    .svc__hero {
+      grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+      gap: clamp(3rem, 5vw, 6rem);
+    }
+  }
+
+  .svc__intro h1 {
+    margin-top: 1.25rem;
+    font-size: var(--step-4);
+    font-weight: 800;
+    letter-spacing: -0.04em;
+  }
+
+  .svc__intro .lead {
+    margin-top: 1.5rem;
+  }
+
+  .svc__p {
+    margin-top: 1rem;
+    max-width: 38em;
+    color: var(--ink-2);
+  }
+
+  .svc__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 2rem;
+  }
+
+  .svc__media :global(img) {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    border-radius: var(--radius);
+  }
+
+  .svc__body {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 3rem;
+    padding-block: clamp(2.5rem, 2rem + 3vw, 5rem) var(--section);
+  }
+
+  @media (min-width: 1000px) {
+    .svc__body {
+      grid-template-columns: minmax(0, 7fr) minmax(0, 4fr);
+      gap: clamp(3rem, 6vw, 7rem);
+      align-items: start;
+    }
+
+    .svc__aside {
+      position: sticky;
+      top: calc(var(--header-h) + 2rem);
+    }
+  }
+
+  .svc__main {
+    display: grid;
+    gap: clamp(2.5rem, 2rem + 2vw, 4rem);
+  }
+
+  .svc__h2 {
+    padding-bottom: 0.85rem;
+    margin-bottom: 1.25rem;
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    border-bottom: 1px solid var(--line-strong);
+  }
+
+  .checklist {
+    list-style: none;
+    display: grid;
+    gap: 0;
+  }
+
+  @media (min-width: 600px) {
+    .checklist {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      column-gap: 2rem;
+    }
+  }
+
+  .checklist li {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 0.75rem;
+    padding: 0.85rem 0;
+    border-bottom: 1px solid var(--line);
+    font-size: var(--step-1);
+    font-weight: 500;
+  }
+
+  .checklist :global(svg) {
+    margin-top: 0.25rem;
+    color: var(--accent);
+  }
+
+  .svc__sections {
+    display: grid;
+    gap: 2rem;
+  }
+
+  @media (min-width: 700px) {
+    .svc__sections {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      column-gap: 2.5rem;
+    }
+  }
+
+  .svc__sections h3 {
+    font-size: var(--step-2);
+  }
+
+  .svc__sections p {
+    margin-top: 0.6rem;
+    color: var(--ink-2);
+  }
+
+  .svc__conditions dl {
+    display: grid;
+    gap: 1rem;
+    margin: 0;
+  }
+
+  .svc__conditions div {
+    padding: 1.25rem 1.4rem;
+    background: var(--accent-tint);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 var(--radius) var(--radius) 0;
+  }
+
+  .svc__conditions dt {
+    font-weight: 700;
+  }
+
+  .svc__conditions dd {
+    margin: 0.3rem 0 0;
+    color: var(--ink-2);
+  }
+
+  .svc__tips {
+    list-style: none;
+    display: grid;
+    gap: 0;
+  }
+
+  @media (min-width: 700px) {
+    .svc__tips {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      column-gap: 2.5rem;
+    }
+  }
+
+  .svc__tips li {
+    display: grid;
+    grid-template-columns: 2.25rem 1fr;
+    gap: 0.5rem;
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .svc__tips .mono {
+    font-size: 0.8rem;
+    color: var(--ink-3);
+    padding-top: 0.2rem;
+  }
+
+  .svc__tips h3 {
+    font-size: 1.05rem;
+  }
+
+  .svc__tips p {
+    margin-top: 0.25rem;
+    font-size: 0.95rem;
+    color: var(--ink-2);
+  }
+
+  .svc__notes {
+    list-style: none;
+    display: grid;
+    gap: 1rem;
+  }
+
+  .svc__notes li {
+    position: relative;
+    padding-left: 1.5rem;
+    color: var(--ink-2);
+  }
+
+  .svc__notes li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.7em;
+    width: 0.75rem;
+    height: 1px;
+    background: var(--ink);
+  }
+
+  .svc__work {
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+  }
+
+  @media (min-width: 700px) {
+    .svc__work {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  .svc__work figure {
+    margin: 0;
+  }
+
+  .svc__work :global(img) {
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
+    border-radius: var(--radius);
+  }
+
+  .svc__work figcaption {
+    margin-top: 0.5rem;
+    font-size: 0.82rem;
+    line-height: 1.4;
+    color: var(--ink-3);
+  }
+
+  /* ---------- Aside ---------- */
+  .svc__aside {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .price-card {
+    padding: 1.75rem;
+    background: var(--white);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+  }
+
+  .price-card__label {
+    font-size: 0.78rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+
+  .price-card__value {
+    margin-top: 0.5rem;
+    font-size: var(--step-2);
+    font-weight: 750;
+    letter-spacing: -0.025em;
+    line-height: 1.2;
+  }
+
+  .price-card ul {
+    list-style: none;
+    margin: 1.25rem 0;
+    border-top: 1px solid var(--line);
+  }
+
+  .price-card li {
+    padding: 0.6rem 0;
+    border-bottom: 1px solid var(--line);
+    font-size: 0.92rem;
+    color: var(--ink-2);
+  }
+
+  .price-card .text-link {
+    margin-top: 1rem;
+  }
+
+  .cta-card {
+    padding: 1.75rem;
+    background: var(--night);
+    color: var(--ink-on-night);
+    border-radius: var(--radius-lg);
+  }
+
+  .cta-card h2 {
+    font-size: var(--step-2);
+  }
+
+  .cta-card p {
+    margin-top: 0.5rem;
+    color: var(--ink-on-night-2);
+  }
+
+  .cta-card .btn {
+    width: 100%;
+    margin-top: 1.5rem;
+  }
+
+  .cta-card__phone {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    font-weight: 600;
+    color: var(--ink-on-night);
+    text-decoration: none;
+  }
+
+  .cta-card__phone:hover {
+    color: var(--accent-on-night);
+  }
+
+  /* ---------- Others ---------- */
+  .svc__others {
+    padding-block: clamp(3rem, 2rem + 4vw, 5.5rem);
+  }
+
+  .others {
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 15rem), 1fr));
+    column-gap: 2rem;
+  }
+
+  .others a {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 0;
+    font-size: var(--step-1);
+    font-weight: 600;
+    text-decoration: none;
+    border-bottom: 1px solid var(--line);
+    transition:
+      color 0.2s,
+      padding 0.3s var(--ease-out);
+  }
+
+  .others a :global(svg) {
+    color: var(--ink-3);
+    transition:
+      transform 0.3s var(--ease-out),
+      color 0.2s;
+  }
+
+  .others a:hover {
+    color: var(--accent);
+  }
+
+  .others a:hover :global(svg) {
+    color: var(--accent);
+    transform: translateX(4px);
+  }
+</style>

@@ -1,0 +1,98 @@
+---
+import Icon from './Icon.astro';
+import { company } from '~/data/company';
+import { type Lang, paths } from '~/i18n';
+import { useTranslations } from '~/i18n/ui';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+---
+
+<div class="mobile-bar" data-mobile-bar aria-hidden="true" inert>
+  <a href={paths.section(lang, 'contact')} class="btn mobile-bar__cta">
+    {t.nav.cta}
+    <Icon name="arrow" class="arrow" />
+  </a>
+  <a href={company.phone.href} class="mobile-bar__call" aria-label={`${t.nav.call}: ${company.phone.display}`}>
+    <Icon name="phone" size={22} />
+  </a>
+</div>
+
+<style>
+  .mobile-bar {
+    position: fixed;
+    left: 0.75rem;
+    right: 0.75rem;
+    bottom: max(0.75rem, env(safe-area-inset-bottom));
+    z-index: 40;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 0.5rem;
+    padding: 0.5rem;
+    background: var(--night);
+    border-radius: var(--radius-lg);
+    box-shadow: 0 16px 40px -16px rgb(20 35 43 / 0.6);
+    transform: translateY(calc(100% + 1.5rem));
+    transition: transform 0.4s var(--ease-out);
+  }
+
+  .mobile-bar.is-visible {
+    transform: none;
+  }
+
+  .mobile-bar__cta {
+    min-height: 3rem;
+  }
+
+  .mobile-bar__call {
+    display: grid;
+    place-items: center;
+    width: 3rem;
+    height: 3rem;
+    color: var(--ink-on-night);
+    border: 1px solid var(--line-on-night);
+    border-radius: var(--radius);
+  }
+
+  .mobile-bar__call:focus-visible {
+    outline-color: var(--accent-on-night);
+  }
+
+  @media (min-width: 1100px) {
+    .mobile-bar {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  const bar = document.querySelector<HTMLElement>('[data-mobile-bar]');
+  const contact = document.querySelector<HTMLElement>('[data-section="contact"]');
+  const footer = document.querySelector<HTMLElement>('footer');
+  const blocking = new Set<Element>();
+
+  function update() {
+    if (!bar) return;
+    const show = window.scrollY > window.innerHeight * 0.8 && blocking.size === 0;
+    bar.classList.toggle('is-visible', show);
+    bar.toggleAttribute('inert', !show);
+    bar.setAttribute('aria-hidden', String(!show));
+  }
+
+  if (bar && 'IntersectionObserver' in window) {
+    // Hide the bar while the form or footer (which repeat these actions) is on screen.
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((e) => (e.isIntersecting ? blocking.add(e.target) : blocking.delete(e.target)));
+      update();
+    });
+    if (contact) observer.observe(contact);
+    if (footer) observer.observe(footer);
+  }
+
+  window.addEventListener('scroll', update, { passive: true });
+  update();
+</script>

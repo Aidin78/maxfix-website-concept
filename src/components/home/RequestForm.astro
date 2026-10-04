@@ -1,0 +1,858 @@
+---
+import Icon from '~/components/Icon.astro';
+import { company } from '~/data/company';
+import { services } from '~/data/services';
+import { type Lang, paths } from '~/i18n';
+import { useTranslations } from '~/i18n/ui';
+import { ALLOWED_EXTENSIONS } from '~/scripts/validation';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang).form;
+const endpoint = import.meta.env.PUBLIC_FORM_ENDPOINT ?? '';
+
+const messages = {
+  ...t.errors,
+  remove: t.filesRemove,
+  sending: t.sending,
+};
+
+const accept = ALLOWED_EXTENSIONS.map((ext) => `.${ext}`).join(',');
+const serviceOptions = services.map((s) => s.title[lang]);
+
+const contactFields = [
+  { name: 'first_name', label: t.firstName, type: 'text', autocomplete: 'given-name' },
+  { name: 'last_name', label: t.lastName, type: 'text', autocomplete: 'family-name' },
+  { name: 'email', label: t.email, type: 'email', autocomplete: 'email', validate: 'email', inputmode: 'email' },
+  { name: 'phone', label: t.phone, type: 'tel', autocomplete: 'tel', validate: 'phone', inputmode: 'tel' },
+  { name: 'address', label: t.address, type: 'text', autocomplete: 'street-address', hint: t.addressHint },
+  {
+    name: 'personnummer',
+    label: t.pnr,
+    type: 'text',
+    autocomplete: 'off',
+    validate: 'pnr',
+    inputmode: 'numeric',
+    hint: t.pnrHint,
+  },
+] as const;
+---
+
+<div class="rq-wrap">
+  <form
+    class="rq"
+    novalidate
+    method="post"
+    enctype="multipart/form-data"
+    aria-label={t.label}
+    data-request-form
+    data-endpoint={endpoint}
+    data-locale={lang === 'sv' ? 'sv-SE' : 'en-GB'}
+    data-messages={JSON.stringify(messages)}
+    data-mail-to={company.email}
+    data-mail-subject={lang === 'sv' ? 'Förfrågan via maxfix.nu' : 'Request via maxfix.nu'}
+  >
+    <input type="hidden" name="language" value={lang} />
+
+    <div class="rq__summary" role="alert" tabindex="-1" hidden data-summary>
+      <Icon name="alert" size={22} />
+      <div>
+        <p>{t.errors.summary}</p>
+        <ul data-summary-list></ul>
+      </div>
+    </div>
+
+    <!-- 01 · About the job -->
+    <fieldset class="rq__step">
+      <legend class="rq__legend">
+        <span class="rq__step-num mono">01</span>
+        {t.step1}
+      </legend>
+
+      <fieldset class="rq__field rq__group" data-field="services">
+        <legend class="rq__label">
+          <span data-label>{t.servicesLabel}</span> <span class="rq__optional">({t.optional})</span>
+        </legend>
+        <div class="chips">
+          {
+            serviceOptions.map((title) => (
+              <label class="chip">
+                <input type="checkbox" name="services" value={title} />
+                <span>
+                  <Icon name="check" size={14} />
+                  {title}
+                </span>
+              </label>
+            ))
+          }
+        </div>
+      </fieldset>
+
+      <div class="rq__field" data-field="message">
+        <label for="rq-message" class="rq__label" data-label>
+          {t.messageLabel}<span class="rq__req" aria-hidden="true">*</span>
+        </label>
+        <p id="rq-message-hint" class="rq__hint">{t.messageHint}</p>
+        <textarea
+          id="rq-message"
+          name="message"
+          rows="5"
+          required
+          aria-describedby="rq-message-hint rq-message-error"
+          class="rq__control"></textarea>
+        <p id="rq-message-error" class="rq__error" data-error-for="message" hidden></p>
+      </div>
+
+      <div class="rq__field" data-field="files">
+        <span class="rq__label" id="rq-files-label">
+          <span data-label>{t.filesLabel}</span> <span class="rq__optional">({t.optional})</span>
+        </span>
+        <div class="dropzone" data-dropzone>
+          <input
+            id="rq-files"
+            type="file"
+            name="files"
+            multiple
+            accept={accept}
+            class="dropzone__input"
+            aria-labelledby="rq-files-label"
+            aria-describedby="rq-files-hint rq-files-error"
+          />
+          <label for="rq-files" class="dropzone__label" aria-hidden="true">
+            <Icon name="upload" size={26} />
+            <span>
+              {t.filesDrop} <u>{t.filesChoose}</u>
+            </span>
+          </label>
+          <p id="rq-files-hint" class="rq__hint dropzone__hint">{t.filesHint}</p>
+        </div>
+        <ul class="files" data-file-list aria-live="polite"></ul>
+        <p id="rq-files-error" class="rq__error" data-error-for="files" hidden></p>
+      </div>
+    </fieldset>
+
+    <!-- 02 · ROT/RUT -->
+    <fieldset class="rq__step">
+      <legend class="rq__legend">
+        <span class="rq__step-num mono">02</span>
+        {t.step2}
+      </legend>
+
+      <fieldset class="rq__field rq__group" data-field="rot_rut" aria-describedby="rq-housing-hint rq-housing-error">
+        <legend class="rq__label" data-label>
+          {t.housingLegend}<span class="rq__req" aria-hidden="true">*</span>
+        </legend>
+        <p id="rq-housing-hint" class="rq__hint">{t.housingHint}</p>
+        <div class="options">
+          <label class="option">
+            <input type="radio" id="rq-own" name="rot_rut" value={t.own} required />
+            <span class="option__box">
+              <span class="option__dot" aria-hidden="true"></span>
+              <strong>{t.own}</strong>
+              <small>{t.ownDesc}</small>
+            </span>
+          </label>
+          <label class="option">
+            <input type="radio" id="rq-rent" name="rot_rut" value={t.rent} data-rent="true" />
+            <span class="option__box">
+              <span class="option__dot" aria-hidden="true"></span>
+              <strong>{t.rent}</strong>
+              <small>{t.rentDesc}</small>
+            </span>
+          </label>
+        </div>
+        <p class="rq__note" data-rent-note hidden>
+          <Icon name="alert" size={18} />
+          {t.rentNote}
+        </p>
+        <p id="rq-housing-error" class="rq__error" data-error-for="rot_rut" hidden></p>
+      </fieldset>
+      <p class="rq__hint rq__abroad">{t.abroadNote}</p>
+    </fieldset>
+
+    <!-- 03 · Contact details -->
+    <fieldset class="rq__step">
+      <legend class="rq__legend">
+        <span class="rq__step-num mono">03</span>
+        {t.step3}
+      </legend>
+
+      <div class="rq__grid">
+        {
+          contactFields.map((f) => {
+            const id = `rq-${f.name}`;
+            const hint = 'hint' in f ? f.hint : undefined;
+            const describedBy = [hint ? `${id}-hint` : null, `${id}-error`].filter(Boolean).join(' ');
+            return (
+              <div class="rq__field" data-field={f.name}>
+                <label for={id} class="rq__label" data-label>
+                  {f.label}
+                  <span class="rq__req" aria-hidden="true">
+                    *
+                  </span>
+                </label>
+                {hint && (
+                  <p id={`${id}-hint`} class="rq__hint">
+                    {hint}
+                  </p>
+                )}
+                <input
+                  id={id}
+                  name={f.name}
+                  type={f.type}
+                  autocomplete={f.autocomplete}
+                  inputmode={'inputmode' in f ? f.inputmode : undefined}
+                  data-validate={'validate' in f ? f.validate : undefined}
+                  required
+                  aria-describedby={describedBy}
+                  class="rq__control"
+                  spellcheck={f.type === 'text' && f.name !== 'personnummer' ? undefined : 'false'}
+                />
+                <p id={`${id}-error`} class="rq__error" data-error-for={f.name} hidden />
+              </div>
+            );
+          })
+        }
+      </div>
+    </fieldset>
+
+    <div class="rq__trap" aria-hidden="true">
+      <label>
+        Website
+        <input type="text" name="website" tabindex="-1" autocomplete="off" />
+      </label>
+    </div>
+
+    <div class="rq__failure" role="alert" tabindex="-1" hidden data-failure>
+      <Icon name="alert" size={22} />
+      <div>
+        <p><strong>{t.failure.title}</strong></p>
+        <p>{t.failure.text}</p>
+        <a href={`mailto:${company.email}`} class="text-link" data-mailto>
+          <Icon name="mail" size={18} />
+          {company.email}
+        </a>
+      </div>
+    </div>
+
+    <div class="rq__submit">
+      <p class="rq__privacy">
+        <span class="rq__req" aria-hidden="true">*</span>
+        {t.required}. {t.privacy} <a href={paths.terms(lang)}>{t.privacyLink}</a>.
+      </p>
+      <button type="submit" class="btn rq__button">
+        <span data-submit-label>{t.submit}</span>
+        <Icon name="arrow" class="arrow" />
+      </button>
+    </div>
+  </form>
+
+  <div class="rq-success" role="status" tabindex="-1" hidden data-success>
+    <span class="rq-success__icon"><Icon name="check" size={28} /></span>
+    <h3>{t.success.title}</h3>
+    <p>
+      {t.success.text}{' '}
+      <a href={company.phone.href}>{company.phone.display}</a>.
+    </p>
+    <button type="button" class="btn btn--ghost" data-reset>{t.success.again}</button>
+  </div>
+</div>
+
+<style>
+  .rq-wrap {
+    background: var(--white);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    box-shadow: 0 30px 60px -48px rgb(20 35 43 / 0.5);
+  }
+
+  .rq {
+    padding: clamp(1.25rem, 0.75rem + 2.5vw, 2.75rem);
+  }
+
+  .rq fieldset {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    min-width: 0;
+  }
+
+  .rq__step + .rq__step {
+    margin-top: 2.5rem;
+    padding-top: 2.5rem;
+    border-top: 1px solid var(--line);
+  }
+
+  .rq__legend {
+    float: left;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0;
+    margin-bottom: 1.5rem;
+    font-size: var(--step-2);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+
+  .rq__legend + * {
+    clear: both;
+  }
+
+  .rq__step-num {
+    display: inline-grid;
+    place-items: center;
+    width: 2.1rem;
+    height: 2.1rem;
+    font-size: 0.78rem;
+    font-weight: 500;
+    letter-spacing: 0;
+    color: var(--paper);
+    background: var(--ink);
+    border-radius: 50%;
+  }
+
+  .rq__field + .rq__field {
+    margin-top: 1.5rem;
+  }
+
+  .rq__label {
+    display: block;
+    padding: 0;
+    margin-bottom: 0.45rem;
+    font-weight: 600;
+    font-size: 0.98rem;
+  }
+
+  .rq__req {
+    margin-left: 0.15rem;
+    color: var(--accent);
+  }
+
+  .rq__optional {
+    font-weight: 400;
+    color: var(--ink-3);
+  }
+
+  .rq__hint {
+    margin: -0.15rem 0 0.6rem;
+    font-size: 0.87rem;
+    line-height: 1.45;
+    color: var(--ink-3);
+  }
+
+  .rq__control {
+    display: block;
+    width: 100%;
+    min-height: 3.1rem;
+    padding: 0.75rem 0.9rem;
+    font-size: 1rem;
+    line-height: 1.4;
+    background: var(--paper);
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius);
+    transition:
+      border-color 0.2s,
+      background-color 0.2s,
+      box-shadow 0.2s;
+  }
+
+  textarea.rq__control {
+    resize: vertical;
+    min-height: 8.5rem;
+  }
+
+  .rq__control:hover {
+    border-color: var(--ink-3);
+  }
+
+  .rq__control:focus {
+    outline: none;
+    background: #fff;
+    border-color: var(--ink);
+    box-shadow: 0 0 0 3px rgb(184 67 15 / 0.25);
+  }
+
+  .has-error .rq__control {
+    border-color: var(--error);
+    background: var(--error-tint);
+  }
+
+  .rq__error {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-top: 0.45rem;
+    font-size: 0.87rem;
+    font-weight: 500;
+    color: var(--error);
+  }
+
+  .rq__error::before {
+    content: '!';
+    display: inline-grid;
+    place-items: center;
+    flex: none;
+    width: 1.05rem;
+    height: 1.05rem;
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: #fff;
+    background: var(--error);
+    border-radius: 50%;
+  }
+
+  .rq__error[hidden] {
+    display: none;
+  }
+
+  .rq__grid {
+    display: grid;
+    gap: 1.5rem 1.25rem;
+  }
+
+  .rq__grid .rq__field + .rq__field {
+    margin-top: 0;
+  }
+
+  .rq__grid .rq__field {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .rq__grid .rq__control {
+    margin-top: auto;
+  }
+
+  @media (min-width: 640px) {
+    .rq__grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  /* ---------- Chips ---------- */
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .chip {
+    position: relative;
+    cursor: pointer;
+  }
+
+  .chip input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .chip span {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    min-height: 2.5rem;
+    padding: 0.45rem 0.85rem;
+    font-size: 0.92rem;
+    font-weight: 500;
+    border: 1px solid var(--line-strong);
+    border-radius: 999px;
+    transition:
+      background-color 0.2s,
+      border-color 0.2s,
+      color 0.2s;
+  }
+
+  .chip :global(svg) {
+    display: none;
+  }
+
+  .chip:hover span {
+    border-color: var(--ink);
+  }
+
+  .chip input:checked + span {
+    background: var(--ink);
+    border-color: var(--ink);
+    color: var(--paper);
+  }
+
+  .chip input:checked + span :global(svg) {
+    display: block;
+  }
+
+  .chip input:focus-visible + span {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  /* ---------- Dropzone ---------- */
+  .dropzone {
+    position: relative;
+    display: grid;
+    justify-items: center;
+    gap: 0.25rem;
+    padding: 1.5rem 1rem 1.1rem;
+    text-align: center;
+    background: var(--paper);
+    border: 1.5px dashed var(--line-strong);
+    border-radius: var(--radius);
+    transition:
+      border-color 0.2s,
+      background-color 0.2s;
+  }
+
+  .dropzone:hover,
+  .dropzone.is-dragging {
+    border-color: var(--accent);
+    background: var(--accent-tint);
+  }
+
+  .dropzone:focus-within {
+    border-color: var(--ink);
+    box-shadow: 0 0 0 3px rgb(184 67 15 / 0.25);
+  }
+
+  .dropzone__input {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+  }
+
+  .dropzone__label {
+    display: grid;
+    justify-items: center;
+    gap: 0.5rem;
+    font-weight: 500;
+    pointer-events: none;
+  }
+
+  .dropzone__label :global(svg) {
+    color: var(--accent);
+  }
+
+  .dropzone__label u {
+    color: var(--accent);
+    text-underline-offset: 0.2em;
+  }
+
+  .dropzone__hint {
+    margin: 0.25rem 0 0;
+    pointer-events: none;
+  }
+
+  .files {
+    list-style: none;
+    display: grid;
+    gap: 0.5rem;
+  }
+
+  .files:not(:empty) {
+    margin-top: 0.75rem;
+  }
+
+  .files :global(.files__item) {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto auto;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.55rem 0.55rem 0.55rem 0.9rem;
+    font-size: 0.92rem;
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+  }
+
+  .files :global(.files__name) {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-weight: 500;
+  }
+
+  .files :global(.files__size) {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    color: var(--ink-3);
+  }
+
+  .files :global(.files__remove) {
+    min-height: 2.25rem;
+    padding: 0.3rem 0.7rem;
+    font-size: 0.85rem;
+    font-weight: 500;
+    background: transparent;
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius);
+    transition:
+      border-color 0.2s,
+      color 0.2s;
+  }
+
+  .files :global(.files__remove:hover) {
+    border-color: var(--error);
+    color: var(--error);
+  }
+
+  /* ---------- Housing options ---------- */
+  .options {
+    display: grid;
+    gap: 0.75rem;
+  }
+
+  @media (min-width: 520px) {
+    .options {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  .option {
+    position: relative;
+    cursor: pointer;
+  }
+
+  .option input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .option__box {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    column-gap: 0.85rem;
+    row-gap: 0.15rem;
+    height: 100%;
+    padding: 1rem 1.1rem;
+    background: var(--paper);
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius);
+    transition:
+      border-color 0.2s,
+      background-color 0.2s,
+      box-shadow 0.2s;
+  }
+
+  .option__dot {
+    grid-row: span 2;
+    margin-top: 0.15rem;
+    width: 1.2rem;
+    height: 1.2rem;
+    border: 1.5px solid var(--ink-3);
+    border-radius: 50%;
+    transition:
+      border-color 0.2s,
+      box-shadow 0.2s;
+  }
+
+  .option strong {
+    font-size: 1rem;
+  }
+
+  .option small {
+    font-size: 0.87rem;
+    color: var(--ink-3);
+  }
+
+  .option:hover .option__box {
+    border-color: var(--ink);
+  }
+
+  .option input:checked + .option__box {
+    border-color: var(--ink);
+    background: #fff;
+    box-shadow: inset 0 0 0 1px var(--ink);
+  }
+
+  .option input:checked + .option__box .option__dot {
+    border-color: var(--accent);
+    box-shadow: inset 0 0 0 4px var(--accent);
+  }
+
+  .option input:focus-visible + .option__box {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  .has-error .option__box {
+    border-color: var(--error);
+  }
+
+  .rq__note {
+    display: flex;
+    gap: 0.6rem;
+    margin-top: 0.85rem;
+    padding: 0.8rem 1rem;
+    font-size: 0.92rem;
+    background: var(--accent-tint);
+    border-radius: var(--radius);
+  }
+
+  .rq__note[hidden] {
+    display: none;
+  }
+
+  .rq__note :global(svg) {
+    flex: none;
+    color: var(--accent);
+  }
+
+  .rq__abroad {
+    margin: 1rem 0 0;
+  }
+
+  /* ---------- Summary / failure ---------- */
+  .rq__summary,
+  .rq__failure {
+    display: flex;
+    gap: 0.85rem;
+    padding: 1rem 1.15rem;
+    border-radius: var(--radius);
+    background: var(--error-tint);
+    border: 1px solid rgb(163 42 28 / 0.35);
+    color: var(--ink);
+  }
+
+  .rq__summary {
+    margin-bottom: 2rem;
+  }
+
+  .rq__summary[hidden],
+  .rq__failure[hidden] {
+    display: none;
+  }
+
+  .rq__summary :global(svg),
+  .rq__failure :global(svg) {
+    flex: none;
+    color: var(--error);
+  }
+
+  .rq__summary p {
+    font-weight: 600;
+  }
+
+  .rq__summary ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 1rem;
+    margin-top: 0.35rem;
+    padding: 0;
+    list-style: none;
+  }
+
+  .rq__summary :global(a) {
+    color: var(--error);
+    font-weight: 500;
+  }
+
+  .rq__failure {
+    margin-top: 2rem;
+    display: flex;
+  }
+
+  .rq__failure > div {
+    display: grid;
+    gap: 0.3rem;
+  }
+
+  .rq__failure .text-link {
+    margin-top: 0.3rem;
+  }
+
+  /* ---------- Submit ---------- */
+  .rq__trap {
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  }
+
+  .rq__submit {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.25rem;
+    margin-top: 2.5rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--line);
+  }
+
+  .rq__privacy {
+    max-width: 30em;
+    font-size: 0.87rem;
+    color: var(--ink-3);
+  }
+
+  .rq__privacy a {
+    color: var(--ink-2);
+  }
+
+  .rq__button {
+    min-width: 14rem;
+    min-height: 3.5rem;
+    font-size: 1.05rem;
+  }
+
+  .rq__button:disabled {
+    opacity: 0.75;
+    cursor: progress;
+  }
+
+  @media (max-width: 559px) {
+    .rq__button {
+      width: 100%;
+    }
+  }
+
+  /* ---------- Success ---------- */
+  .rq-success {
+    display: grid;
+    justify-items: start;
+    gap: 1rem;
+    padding: clamp(2rem, 1.5rem + 3vw, 4rem);
+  }
+
+  .rq-success[hidden] {
+    display: none;
+  }
+
+  .rq-success:focus {
+    outline: none;
+  }
+
+  .rq-success__icon {
+    display: grid;
+    place-items: center;
+    width: 3.5rem;
+    height: 3.5rem;
+    color: #fff;
+    background: var(--success);
+    border-radius: 50%;
+  }
+
+  .rq-success h3 {
+    font-size: var(--step-3);
+  }
+
+  .rq-success p {
+    max-width: 34em;
+    color: var(--ink-2);
+  }
+</style>
+
+<script>
+  import { initRequestForm } from '~/scripts/request-form';
+
+  document.querySelectorAll<HTMLFormElement>('[data-request-form]').forEach(initRequestForm);
+</script>

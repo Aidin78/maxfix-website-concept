@@ -1,0 +1,29 @@
+---
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import Hero from './Hero.astro';
+import Services from './Services.astro';
+import Pricing from './Pricing.astro';
+import Reviews from './Reviews.astro';
+import About from './About.astro';
+import Work from './Work.astro';
+import HowItWorks from './HowItWorks.astro';
+import Contact from './Contact.astro';
+import { type Lang, paths } from '~/i18n';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+---
+
+<BaseLayout lang={lang} alternates={{ sv: paths.home('sv'), en: paths.home('en') }}>
+  <Hero lang={lang} />
+  <Services lang={lang} />
+  <Pricing lang={lang} />
+  <Reviews lang={lang} />
+  <About lang={lang} />
+  <Work lang={lang} />
+  <HowItWorks lang={lang} />
+  <Contact lang={lang} />
+</BaseLayout>
